@@ -12,11 +12,11 @@ t = 1:dt:totalTime;
 figure;
 subplot(2, 1, 1)
 for k=1:numOfVehicles
-  plot(t, position_mpc(k,:)-(k-1)*safeDistance); hold on;
+  plot(t, position_mpc(k,:)); hold on;
   lndstr{k}=char(['Car ', num2str(k)]);
 end
 title('MPC controller');
-size(waypoints)
+plot(t, waypoints(1:length(t)), 'r--')
 xlabel('time (s)')
 ylabel('Platoon vehicles positions (m)')
 lndstr{numOfVehicles+1} = char('Leading vehicle');
@@ -29,12 +29,12 @@ for k=1:numOfVehicles
   plot(t, velocity_mpc(k,:)); hold on;
   lndstr{k}=char(['Car ', num2str(k)]);
 end
-plot(t, leadingVehicleSpeed, 'r--')
+plot(t, leadingVehicleSpeed(1:length(t)), 'r--')
 lndstr{numOfVehicles+1} = char('Leading vehicle');
 xlabel('time (s)')
 ylabel('speed (m/s)')
 grid on;
 legend(lndstr)
 
-savefig(['./results/pathplanning_mpc_carla.fig'])
-saveas(gcf,['./results/pathplanning_mpc_carla.eps'],'epsc')
+savefig('./results/pathplanning_mpc_carla.fig')
+saveas(gcf,'./results/pathplanning_mpc_carla.eps','epsc')

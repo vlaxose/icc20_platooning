@@ -55,7 +55,7 @@ end
 for t = numOfVehicles+1:length(t)
         t
      for k=1:numOfVehicles
-        rs(k, 1) = waypoints(t) - position(k, t-1);
+        rs(k, 1) = waypoints(t) - position(k, t-1) - k*safeDistance;
      end
      Rs = kron(ones(Np,1), rs);
 
