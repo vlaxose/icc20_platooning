@@ -12,7 +12,7 @@ t = 1:dt:totalTime;
 figure;
 subplot(2, 1, 1)
 for k=1:numOfVehicles
-  plot(t, position_mpc(k,:)-(k-1)*safeDistance); hold on;
+  plot(t, position_mpc(k,:)); hold on;
   lndstr{k}=char(['Car ', num2str(k)]);
 end
 title('MPC controller');

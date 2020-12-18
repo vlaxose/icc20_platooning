@@ -1,9 +1,9 @@
 clc
 clear
-numOfVehicles = 3;
+numOfVehicles = 5;
 safeDistance = 10;
 
-dt = 0.5;
+dt = 0.1;
 [waypoints,totalTime,leadingVehicleSpeed] = createWaypoints('carla', dt);
 [position_mpc, velocity_mpc] = controlModule(waypoints, dt, totalTime, numOfVehicles, safeDistance);
 
@@ -16,7 +16,7 @@ for k=1:numOfVehicles
   lndstr{k}=char(['Car ', num2str(k)]);
 end
 title('MPC controller');
-plot(t, waypoints, 'r--')
+size(waypoints)
 xlabel('time (s)')
 ylabel('Platoon vehicles positions (m)')
 lndstr{numOfVehicles+1} = char('Leading vehicle');
@@ -35,7 +35,6 @@ xlabel('time (s)')
 ylabel('speed (m/s)')
 grid on;
 legend(lndstr)
-
 
 savefig(['./results/pathplanning_mpc_carla.fig'])
 saveas(gcf,['./results/pathplanning_mpc_carla.eps'],'epsc')

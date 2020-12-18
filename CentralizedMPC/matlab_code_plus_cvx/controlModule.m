@@ -16,9 +16,6 @@ end
 Lg = eye(numOfVehicles) - diag(diag(E,1),1);
 
 position = zeros(numOfVehicles, length(t));
-for k=1:numOfVehicles
-  position(k, 1) = waypoints(1,1)-(k-1)*safeDistance;
-end
 velocity = zeros(numOfVehicles, length(t));
 
 %% controller paramters and initialization
@@ -57,19 +54,14 @@ end
     %% Runtime
 for t = numOfVehicles+1:length(t)
         t
-
      for k=1:numOfVehicles
-%                   rs(k, 1) = waypoints(t-(k-1)) - waypoints(t-(k-1)-1);
-        rs(k, 1) = waypoints(t-(k-1)) - position(k, t-1);
-
+        rs(k, 1) = waypoints(t) - position(k, t-1);
      end
      Rs = kron(ones(Np,1), rs);
 
      Psi = (Phi'*Phi + 1e-3*eye(Nc*numOfVehicles));
      beta = (Phi'*(Rs - F*DX(:, t-1)));
      
-%      DU_cvx = pinv(Psi)*beta;
-
      cvx_begin quiet
           variable DU_cvx(Nc*numOfVehicles)
           minimize norm(beta-Psi*DU_cvx)
@@ -78,17 +70,12 @@ for t = numOfVehicles+1:length(t)
           DXX = Ampc*DX(:, t-1) + Bmpc*DU_cvx(1:numOfVehicles);
           for k=1:numOfVehicles
             abs(X(2*k, t) + DXX(2*k))/dt <= 10;
-            if(k>1)
-              pos_k = X(k, t) + DXX(k);
-              pos_k_1 = X(k-1, t) + DXX(k-1);
-              abs(pos_k-pos_k_1) <= 10;
-            end
           end
      cvx_end
 
      DX(:, t) = Ampc*DX(:, t-1) + Bmpc*DU_cvx(1:numOfVehicles);
      X(:, t+1) = X(:, t) + DX(:, t);
-
+ 
      position(:, t) = position(:, t-1)  + X([2:2:2*numOfVehicles], t+1);
-     velocity(:, t) = X([2:2:2*numOfVehicles], t)/dt;
+     velocity(:, t) = X([2:2:2*numOfVehicles], t+1)/dt;
 end
